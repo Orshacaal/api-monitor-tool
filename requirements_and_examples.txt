@@ -1,0 +1,157 @@
+# requirements.txt
+flask==2.3.3
+psutil==5.9.5
+requests==2.31.0
+
+# Como instalar e usar a ferramenta
+
+## Instalação
+```bash
+pip install -r requirements.txt
+```
+
+## Exemplos de Uso
+
+### 1. Adicionar uma API Flask
+```bash
+python api_monitor.py add "minha-api" "/caminho/para/api" 5000 "python app.py" --health-url "http://localhost:5000/health"
+```
+
+### 2. Adicionar uma API FastAPI
+```bash
+python api_monitor.py add "fastapi-app" "/caminho/para/fastapi" 8000 "uvicorn main:app --host 0.0.0.0 --port 8000"
+```
+
+### 3. Adicionar uma API Node.js
+```bash
+python api_monitor.py add "node-api" "/caminho/para/node" 3000 "node server.js" --health-url "http://localhost:3000/status"
+```
+
+### 4. Listar APIs registradas
+```bash
+python api_monitor.py list
+```
+
+### 5. Iniciar monitoramento completo
+```bash
+python api_monitor.py monitor --web-port 8080 --monitor-interval 30
+```
+
+## Estrutura de arquivos gerados
+```
+./
+├── api_monitor.py          # Arquivo principal
+├── requirements.txt        # Dependências
+├── apis_config.json        # Configuração das APIs (gerado automaticamente)
+├── api_monitor.log         # Log da aplicação
+└── README.md              # Este arquivo
+```
+
+## Funcionalidades
+
+✅ **Deploy Automático de APIs**
+- Adicionar/remover APIs via linha de comando
+- Configuração persistente
+- Auto-restart em caso de falha
+- Health checks configuráveis
+
+✅ **Monitoramento do Sistema**
+- CPU, Memória, Disco e Rede
+- Métricas em tempo real
+- Histórico de performance
+- Alertas automáticos
+
+✅ **Dashboard Web Interativo**
+- Interface visual moderna
+- Controle remoto das APIs
+- Gráficos de performance
+- Atualização automática
+
+✅ **Gestão de Processos**
+- Controle de ciclo de vida das APIs
+- Logs centralizados
+- Variáveis de ambiente
+- Gerenciamento de portas
+
+## Interface Web
+
+Acesse `http://localhost:8080` para:
+- Visualizar métricas do sistema em tempo real
+- Controlar APIs (iniciar/parar/reiniciar)
+- Monitorar status e health checks
+- Ver logs e histórico de performance
+
+## Configuração Avançada
+
+### Arquivo apis_config.json (exemplo)
+```json
+{
+  "minha-api": {
+    "name": "minha-api",
+    "path": "/home/user/api",
+    "port": 5000,
+    "command": "python app.py",
+    "auto_restart": true,
+    "health_check_url": "http://localhost:5000/health",
+    "env_vars": {
+      "FLASK_ENV": "production",
+      "DATABASE_URL": "postgresql://..."
+    }
+  }
+}
+```
+
+## Comandos Úteis
+
+### Monitoramento em background
+```bash
+nohup python api_monitor.py monitor > monitor.log 2>&1 &
+```
+
+### Usar com systemd (Linux)
+Criar arquivo `/etc/systemd/system/api-monitor.service`:
+```ini
+[Unit]
+Description=API Monitor Service
+After=network.target
+
+[Service]
+Type=simple
+User=your-user
+WorkingDirectory=/path/to/api-monitor
+ExecStart=/usr/bin/python3 api_monitor.py monitor
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Então:
+```bash
+sudo systemctl enable api-monitor
+sudo systemctl start api-monitor
+```
+
+## API REST Endpoints
+
+- `GET /` - Dashboard web
+- `GET /api/status` - Status geral (APIs + sistema)
+- `POST /api/start/<name>` - Iniciar API
+- `POST /api/stop/<name>` - Parar API  
+- `POST /api/restart/<name>` - Reiniciar API
+
+## Logs
+
+Os logs são salvos em `api_monitor.log` e incluem:
+- Eventos de inicialização/parada de APIs
+- Métricas do sistema
+- Erros e alertas
+- Health check results
+
+## Personalização
+
+A ferramenta é modular e permite:
+- Adicionar novos tipos de métricas
+- Customizar o dashboard
+- Integrar com sistemas de alertas
+- Exportar métricas para Prometheus/Grafana
